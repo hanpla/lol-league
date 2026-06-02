@@ -112,7 +112,8 @@ export const updateMatchScore = async (
     throw new Error(error.message);
   }
 
-  // 메인 페이지 캐시 갱신
+  // 메인 및 어드민 페이지 캐시 갱신
   revalidatePath("/");
+  revalidatePath("/admin");
   return data as Match[];
 };
