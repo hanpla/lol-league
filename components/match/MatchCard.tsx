@@ -1,6 +1,6 @@
 import { Match } from "@/types/match";
-import { formatMatchTime } from "@/lib/utils/date";
 import TeamLogo from "./TeamLogo";
+import LocalTime from "@/components/common/LocalTime";
 
 interface MatchCardProps {
   match: Match;
@@ -24,7 +24,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           {match.league?.code}
         </span>
         <span className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
-          {formatMatchTime(match.scheduled_at)}
+          <LocalTime dateString={match.scheduled_at} />
         </span>
         {isLive ? (
           <span className="inline-flex animate-pulse items-center gap-1 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[10px] font-bold text-red-500 dark:border-red-900/50 dark:bg-red-950/60 dark:text-red-400">

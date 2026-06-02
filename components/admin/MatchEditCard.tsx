@@ -3,7 +3,8 @@
 import { Match } from "@/types/match";
 import { updateMatchScore } from "@/lib/actions/match";
 import { useState } from "react";
-import { formatMatchDate, formatMatchTime } from "@/lib/utils/date";
+import LocalDate from "@/components/common/LocalDate";
+import LocalTime from "@/components/common/LocalTime";
 
 interface MatchEditCardProps {
   match: Match;
@@ -53,10 +54,10 @@ export default function MatchEditCard({ match, adminPassword }: MatchEditCardPro
             {match.league?.code} ({match.stage})
           </span>
           <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-            {formatMatchDate(match.scheduled_at)}
+            <LocalDate dateString={match.scheduled_at} />
           </span>
           <span className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
-            {formatMatchTime(match.scheduled_at)}
+            <LocalTime dateString={match.scheduled_at} />
           </span>
         </div>
 

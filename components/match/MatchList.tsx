@@ -46,7 +46,10 @@ export default function MatchList({ matches }: MatchListProps) {
           <div key={dateStr} className="space-y-4">
             {/* Date Header */}
             <div className="text-center">
-              <h2 className="mt-0.5 text-lg font-bold text-neutral-800 dark:text-neutral-200">
+              <h2
+                className="mt-0.5 text-lg font-bold text-neutral-800 dark:text-neutral-200"
+                suppressHydrationWarning
+              >
                 {dateStr}
               </h2>
             </div>
