@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import ThemeProvider from "@/components/providers/ThemeProvider";
 import "./globals.css";
 
 const pretendard = localFont({
@@ -21,8 +22,10 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${pretendard.variable} antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="ko" className={`${pretendard.variable} antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
