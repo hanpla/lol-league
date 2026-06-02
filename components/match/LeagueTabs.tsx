@@ -5,10 +5,7 @@ interface LeagueTabsProps {
   selectedLeague: string;
 }
 
-export default function LeagueTabs({
-  selectedMonth,
-  selectedLeague,
-}: LeagueTabsProps) {
+export default function LeagueTabs({ selectedMonth, selectedLeague }: LeagueTabsProps) {
   const leagues = [
     { name: "전체", code: "all" },
     { name: "LCK", code: "LCK" },

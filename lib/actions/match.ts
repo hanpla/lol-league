@@ -10,12 +10,14 @@ import { revalidatePath } from "next/cache";
 export const getMatches = async (): Promise<Match[]> => {
   const { data, error } = await supabase
     .from("matches")
-    .select(`
+    .select(
+      `
       *,
       league:leagues(*),
       team1:teams!team1_id(*),
       team2:teams!team2_id(*)
-    `)
+    `,
+    )
     .order("scheduled_at", { ascending: true });
 
   if (error) {
@@ -32,12 +34,14 @@ export const getMatches = async (): Promise<Match[]> => {
 export const getMatchesByStatus = async (status: Match["status"]): Promise<Match[]> => {
   const { data, error } = await supabase
     .from("matches")
-    .select(`
+    .select(
+      `
       *,
       league:leagues(*),
       team1:teams!team1_id(*),
       team2:teams!team2_id(*)
-    `)
+    `,
+    )
     .eq("status", status)
     .order("scheduled_at", { ascending: true });
 
@@ -58,8 +62,19 @@ export const updateMatchScore = async (
   team1Score: number,
   team2Score: number,
   status: Match["status"],
-  winnerId: string | null = null
+  winnerId: string | null = null,
+  adminPassword?: string,
 ): Promise<Match[]> => {
+  const correctPassword = process.env.ADMIN_PASSWORD;
+
+  if (!correctPassword) {
+    throw new Error("서버에 관리자 비밀번호 환경 변수가 설정되지 않았습니다.");
+  }
+
+  if (!adminPassword || adminPassword !== correctPassword) {
+    throw new Error("올바르지 않은 관리자 비밀번호입니다.");
+  }
+
   const { data, error } = await supabaseAdmin
     .from("matches")
     .update({
@@ -80,4 +95,3 @@ export const updateMatchScore = async (
   revalidatePath("/");
   return data as Match[];
 };
-

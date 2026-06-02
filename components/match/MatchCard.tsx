@@ -47,10 +47,7 @@ export default function MatchCard({ match }: MatchCardProps) {
         {/* Team 1 Row */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-2.5">
-            <TeamLogo
-              logoUrl={match.team1?.logo_url || null}
-              name={match.team1?.name || "T1"}
-            />
+            <TeamLogo logoUrl={match.team1?.logo_url || null} name={match.team1?.name || "T1"} />
             <span
               className={`truncate text-sm ${
                 isCompleted
@@ -85,10 +82,7 @@ export default function MatchCard({ match }: MatchCardProps) {
         {/* Team 2 Row */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-2.5">
-            <TeamLogo
-              logoUrl={match.team2?.logo_url || null}
-              name={match.team2?.name || "T2"}
-            />
+            <TeamLogo logoUrl={match.team2?.logo_url || null} name={match.team2?.name || "T2"} />
             <span
               className={`truncate text-sm ${
                 isCompleted
@@ -132,10 +126,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           >
             {match.team1?.name}
           </span>
-          <TeamLogo
-            logoUrl={match.team1?.logo_url || null}
-            name={match.team1?.name || "T1"}
-          />
+          <TeamLogo logoUrl={match.team1?.logo_url || null} name={match.team1?.name || "T1"} />
         </div>
 
         {/* Score display */}
@@ -151,9 +142,7 @@ export default function MatchCard({ match }: MatchCardProps) {
               >
                 {match.team1_score}
               </span>
-              <span className="text-xs text-neutral-300 dark:text-neutral-600">
-                :
-              </span>
+              <span className="text-xs text-neutral-300 dark:text-neutral-600">:</span>
               <span
                 className={
                   isCompleted && !isTeam2Winner
@@ -173,10 +162,7 @@ export default function MatchCard({ match }: MatchCardProps) {
 
         {/* Team 2 */}
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <TeamLogo
-            logoUrl={match.team2?.logo_url || null}
-            name={match.team2?.name || "T2"}
-          />
+          <TeamLogo logoUrl={match.team2?.logo_url || null} name={match.team2?.name || "T2"} />
           <span
             className={`truncate text-base ${
               isCompleted

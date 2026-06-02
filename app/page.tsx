@@ -31,8 +31,7 @@ export default async function Home({
     const matchDate = new Date(match.scheduled_at);
     // getMonth() is 0-indexed (0 = Jan, 5 = June)
     const matchesMonth = matchDate.getMonth() + 1 === selectedMonth;
-    const matchesLeague =
-      selectedLeague === "all" || match.league?.code === selectedLeague;
+    const matchesLeague = selectedLeague === "all" || match.league?.code === selectedLeague;
     return matchesMonth && matchesLeague;
   });
 
@@ -50,10 +49,7 @@ export default async function Home({
         />
 
         {/* League Filtering Tabs Component */}
-        <LeagueTabs
-          selectedMonth={selectedMonth}
-          selectedLeague={selectedLeague}
-        />
+        <LeagueTabs selectedMonth={selectedMonth} selectedLeague={selectedLeague} />
 
         {/* Grouped Match List Component */}
         <MatchList matches={filteredMatches} />
