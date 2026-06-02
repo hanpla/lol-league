@@ -22,11 +22,14 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${pretendard.variable} antialiased`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col">
+    <html
+      lang="ko"
+      className={`${pretendard.variable} antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="flex min-h-full flex-col">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
 }
-
