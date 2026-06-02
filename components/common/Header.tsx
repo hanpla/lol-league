@@ -4,15 +4,8 @@ import ThemeToggle from "./ThemeToggle";
 export default function Header() {
   return (
     <header className="relative mb-12 flex items-center justify-between border-b border-neutral-200 pb-6 dark:border-neutral-800/60">
-      {/* Left Column: Link to Admin Panel */}
-      <div className="flex flex-1 justify-start">
-        <Link
-          href="/admin"
-          className="cursor-pointer text-xs font-bold text-neutral-400 transition-colors duration-200 hover:text-neutral-950 dark:hover:text-neutral-50"
-        >
-          관리 도구
-        </Link>
-      </div>
+      {/* Left Column: Spacer */}
+      <div className="flex flex-1 justify-start" />
 
       {/* Center Column: Header Title */}
       <div className="text-center">
