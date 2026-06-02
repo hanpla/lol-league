@@ -9,10 +9,7 @@ export const GET = async (request: Request): Promise<Response> => {
   const authHeader = request.headers.get("authorization");
 
   // 운영(production) 환경에서만 Vercel 크론 비밀 키(CRON_SECRET) 검증 수행 (로컬 테스트 편의성용)
-  if (
-    process.env.NODE_ENV === "production" &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
+  if (process.env.NODE_ENV === "production" && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -27,10 +24,7 @@ export const GET = async (request: Request): Promise<Response> => {
 
     if (error) {
       console.error("Cron Job Database Update Error:", error);
-      return Response.json(
-        { success: false, error: error.message },
-        { status: 500 },
-      );
+      return Response.json({ success: false, error: error.message }, { status: 500 });
     }
 
     const updatedCount = data ? data.length : 0;
@@ -46,12 +40,8 @@ export const GET = async (request: Request): Promise<Response> => {
       updatedCount,
     });
   } catch (err) {
-    const errorMessage =
-      err instanceof Error ? err.message : "Unknown error occurred";
+    const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
     console.error("Cron Job Internal Server Error:", err);
-    return Response.json(
-      { success: false, error: errorMessage },
-      { status: 500 },
-    );
+    return Response.json({ success: false, error: errorMessage }, { status: 500 });
   }
 };
