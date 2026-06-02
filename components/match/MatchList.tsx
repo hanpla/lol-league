@@ -27,7 +27,6 @@ export default function MatchList({ matches }: MatchListProps) {
   if (matches.length === 0) {
     return (
       <div className="rounded-2xl border border-neutral-200 bg-white py-20 text-center shadow-sm transition-colors duration-300 dark:border-neutral-900/40 dark:bg-neutral-900/10 dark:shadow-none">
-        <span className="mb-3 block text-3xl text-neutral-400 dark:text-neutral-600">📅</span>
         <h3 className="text-base font-bold text-neutral-700 dark:text-neutral-400">
           등록된 경기 일정이 없습니다
         </h3>
