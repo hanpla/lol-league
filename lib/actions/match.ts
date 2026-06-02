@@ -11,6 +11,24 @@ export const getMatches = async (): Promise<Match[]> => {
   "use cache";
   cacheLife("minutes");
 
+  // 실시간으로 시간이 지난 대기 중인(scheduled) 경기를 진행중(live) 상태로 자동 전환 (Hobby 플랜 크론 보완)
+  try {
+    const { data: updatedData, error: updateError } = await supabaseAdmin
+      .from("matches")
+      .update({ status: "live" })
+      .eq("status", "scheduled")
+      .lte("scheduled_at", new Date().toISOString())
+      .select();
+
+    if (updateError) {
+      console.error("Failed to auto-update match status to live on-the-fly:", updateError);
+    } else if (updatedData && updatedData.length > 0) {
+      revalidatePath("/");
+    }
+  } catch (err) {
+    console.error("Error during auto-update match status on-the-fly:", err);
+  }
+
   const { data, error } = await supabase
     .from("matches")
     .select(
