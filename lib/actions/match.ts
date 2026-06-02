@@ -2,12 +2,15 @@
 
 import { supabase, supabaseAdmin } from "@/lib/utils/supabase";
 import { Match } from "@/types/match";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, cacheLife } from "next/cache";
 
 /**
  * 1. 전체 경기 일정을 조회합니다. (일반 사용자 조회용 - Public Client 사용)
  */
 export const getMatches = async (): Promise<Match[]> => {
+  "use cache";
+  cacheLife("minutes");
+
   const { data, error } = await supabase
     .from("matches")
     .select(
