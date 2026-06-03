@@ -65,7 +65,7 @@ const VodPanel = ({ videoUrl }: { videoUrl: string | null }) => (
   <div className="border-t border-neutral-100 bg-neutral-50/50 py-3 text-center dark:border-neutral-800/60 dark:bg-neutral-900/10">
     {videoUrl ? (
       <div className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-        vod:{" "}
+        하이라이트:{" "}
         <a
           href={videoUrl}
           target="_blank"
