@@ -2,9 +2,12 @@
 
 @theme {
   --font-sans:
-    var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui,
-    Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
-    "Malgun Gothic", sans-serif;
+    var(--font-pretendard), -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  font-size: 18px;
+}
