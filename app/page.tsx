@@ -1,5 +1,4 @@
 import { getMatches } from "@/lib/actions/match";
-import { Match } from "@/types/match";
 import Header from "@/components/common/Header";
 import MonthTabs from "@/components/match/MonthTabs";
 import LeagueTabs from "@/components/match/LeagueTabs";
@@ -20,12 +19,8 @@ async function MatchDashboardContainer({ searchParams }: SearchParamsProps) {
   const currentMonth = 6;
   const { selectedMonth, selectedLeague } = parseMatchSearchParams(month, league, currentMonth);
 
-  let allMatches: Match[] = [];
-  try {
-    allMatches = await getMatches();
-  } catch (error) {
-    console.error("Failed to load matches:", error);
-  }
+  // Fetch matches from the server (exceptions will bubble up to app/error.tsx)
+  const allMatches = await getMatches();
 
   // Filter matches by the selected month AND league
   const filteredMatches = filterMatches(allMatches, selectedMonth, selectedLeague);
