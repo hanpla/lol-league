@@ -1,7 +1,7 @@
 "use server";
 
 import { supabase, supabaseAdmin } from "@/lib/utils/supabase";
-import { Match } from "@/types/match";
+import { Match, FormState } from "@/types/match";
 import { revalidatePath, cacheLife } from "next/cache";
 
 /**
@@ -85,6 +85,7 @@ export const updateMatchScore = async (
   status: Match["status"],
   winnerId: string | null = null,
   adminPassword?: string,
+  videoUrl: string | null = null,
 ): Promise<Match[]> => {
   const correctPassword = process.env.ADMIN_PASSWORD;
 
@@ -103,6 +104,7 @@ export const updateMatchScore = async (
       team2_score: team2Score,
       status,
       winner_id: winnerId,
+      video_url: videoUrl,
     })
     .eq("id", matchId)
     .select();
@@ -116,4 +118,36 @@ export const updateMatchScore = async (
   revalidatePath("/");
   revalidatePath("/admin");
   return data as Match[];
+};
+
+/**
+ * 4. 어드민 페이지의 useActionState 폼 제출을 처리하는 서버 액션입니다.
+ */
+export const updateMatchScoreAction = async (
+  _prevState: FormState,
+  formData: FormData,
+): Promise<FormState> => {
+  const statusValue = formData.get("status") as Match["status"];
+  const team1ScoreValue = parseInt(formData.get("team1Score") as string, 10) || 0;
+  const team2ScoreValue = parseInt(formData.get("team2Score") as string, 10) || 0;
+  const winnerIdValue = formData.get("winnerId") as string | null;
+  const videoUrlValue = formData.get("videoUrl") as string | null;
+  const passwordValue = formData.get("adminPassword") as string;
+  const matchIdValue = formData.get("matchId") as string;
+
+  try {
+    await updateMatchScore(
+      matchIdValue,
+      team1ScoreValue,
+      team2ScoreValue,
+      statusValue,
+      statusValue === "completed" ? winnerIdValue || null : null,
+      passwordValue,
+      videoUrlValue ? videoUrlValue.trim() : null,
+    );
+    return { success: true, message: "저장 완료!" };
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : "오류가 발생했습니다.";
+    return { success: false, message: errMsg };
+  }
 };
