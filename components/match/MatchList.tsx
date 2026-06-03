@@ -7,21 +7,16 @@ interface MatchListProps {
 }
 
 export default function MatchList({ matches }: MatchListProps) {
-  // Group matches by date
-  const groupedMatches: { [date: string]: Match[] } = {};
+  // Group matches by date in linear O(N) time (input matches are already pre-sorted by scheduled_at ascending)
+  const groupedMatches: { dateStr: string; matchesOnDate: Match[] }[] = [];
   matches.forEach((match) => {
-    const dateKey = formatMatchDate(match.scheduled_at);
-    if (!groupedMatches[dateKey]) {
-      groupedMatches[dateKey] = [];
+    const dateStr = formatMatchDate(match.scheduled_at);
+    const lastGroup = groupedMatches[groupedMatches.length - 1];
+    if (lastGroup && lastGroup.dateStr === dateStr) {
+      lastGroup.matchesOnDate.push(match);
+    } else {
+      groupedMatches.push({ dateStr, matchesOnDate: [match] });
     }
-    groupedMatches[dateKey].push(match);
-  });
-
-  // Sort dates
-  const sortedDates = Object.keys(groupedMatches).sort((a, b) => {
-    const dateA = new Date(groupedMatches[a][0].scheduled_at);
-    const dateB = new Date(groupedMatches[b][0].scheduled_at);
-    return dateA.getTime() - dateB.getTime();
   });
 
   if (matches.length === 0) {
@@ -39,9 +34,7 @@ export default function MatchList({ matches }: MatchListProps) {
 
   return (
     <div className="space-y-12">
-      {sortedDates.map((dateStr) => {
-        const matchesOnDate = groupedMatches[dateStr];
-
+      {groupedMatches.map(({ dateStr, matchesOnDate }) => {
         return (
           <div key={dateStr} className="space-y-4">
             {/* Date Header */}

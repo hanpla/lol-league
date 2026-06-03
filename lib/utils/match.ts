@@ -22,9 +22,8 @@ export const filterMatches = (
   selectedLeague: string,
 ): Match[] => {
   return matches.filter((match) => {
-    const matchDate = new Date(match.scheduled_at);
-    // getMonth()는 0부터 시작하므로 1을 더해줍니다.
-    const matchesMonth = matchDate.getMonth() + 1 === selectedMonth;
+    // Extract month directly from ISO string (e.g. "2026-04-01..." -> month index 5 to 7 is "04")
+    const matchesMonth = parseInt(match.scheduled_at.slice(5, 7), 10) === selectedMonth;
     const matchesLeague = selectedLeague === "all" || match.league?.code === selectedLeague;
     return matchesMonth && matchesLeague;
   });
