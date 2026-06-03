@@ -5,16 +5,15 @@ interface LeagueTabsProps {
   selectedLeague: string;
 }
 
-export default function LeagueTabs({ selectedMonth, selectedLeague }: LeagueTabsProps) {
-  const leagues = [
-    { name: "전체", code: "all" },
-    { name: "LCK", code: "LCK" },
-    { name: "EWC", code: "EWC" },
-  ];
+const LEAGUE = [
+  { name: "전체", code: "all" },
+  { name: "LCK", code: "LCK" },
+];
 
+export default function LeagueTabs({ selectedMonth, selectedLeague }: LeagueTabsProps) {
   return (
     <section className="mb-8 flex flex-wrap justify-center gap-2">
-      {leagues.map((league) => {
+      {LEAGUE.map((league) => {
         const isSelected = selectedLeague === league.code;
         // Build URL preserving the selected month
         const href = `/?month=${selectedMonth}${league.code !== "all" ? `&league=${league.code}` : ""}`;
