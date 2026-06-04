@@ -15,8 +15,10 @@ interface SearchParamsProps {
 async function MatchDashboardContainer({ searchParams }: SearchParamsProps) {
   const { month, league } = await searchParams;
 
-  // Current month is 6 (June 2026)
-  const currentMonth = 6;
+  // KST(UTC+9) 기준 현재 월 계산 (서버가 UTC 환경이어도 한국 시간 기준으로 정확히 동작)
+  const now = new Date();
+  const kstMonth = new Date(now.getTime() + 9 * 60 * 60 * 1000).getUTCMonth() + 1;
+  const currentMonth = kstMonth;
   const { selectedMonth, selectedLeague } = parseMatchSearchParams(month, league, currentMonth);
 
   // Fetch matches from the server (exceptions will bubble up to app/error.tsx)

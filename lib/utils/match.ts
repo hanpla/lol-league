@@ -6,7 +6,7 @@ import { Match } from "@/types/match";
 export const parseMatchSearchParams = (
   month: string | undefined,
   league: string | undefined,
-  currentMonth: number = 6,
+  currentMonth: number = new Date(Date.now() + 9 * 60 * 60 * 1000).getUTCMonth() + 1,
 ) => {
   const selectedMonth = month ? parseInt(month, 10) : currentMonth;
   const selectedLeague = league || "all";
