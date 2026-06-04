@@ -1,153 +1,58 @@
 "use server";
 
-import { supabase, supabaseAdmin } from "@/lib/utils/supabase";
-import { Match, FormState } from "@/types/match";
-import { revalidatePath, cacheLife } from "next/cache";
+import { Match } from "@/types/match";
+import { adaptPandaScoreMatch } from "@/lib/utils/adapter";
+import { cacheLife } from "next/cache";
 
 /**
- * 1. 전체 경기 일정을 조회합니다. (일반 사용자 조회용 - Public Client 사용)
+ * LCK 2026 대회 일정을 PandaScore API에서 직접 조회합니다.
+ * Next.js의 use cache와 cacheLife를 활용하여 5분 캐시를 적용합니다.
  */
 export const getMatches = async (): Promise<Match[]> => {
   "use cache";
-  cacheLife("minutes");
+  cacheLife({
+    stale: 300, // 5분
+    expire: 600, // 최대 10분
+  });
 
-  // 실시간으로 시간이 지난 대기 중인(scheduled) 경기를 진행중(live) 상태로 자동 전환 (Hobby 플랜 크론 보완)
-  try {
-    const { data: updatedData, error: updateError } = await supabaseAdmin
-      .from("matches")
-      .update({ status: "live" })
-      .eq("status", "scheduled")
-      .lte("scheduled_at", new Date().toISOString())
-      .select();
-
-    if (updateError) {
-      console.error("Failed to auto-update match status to live on-the-fly:", updateError);
-    } else if (updatedData && updatedData.length > 0) {
-      revalidatePath("/");
-    }
-  } catch (err) {
-    console.error("Error during auto-update match status on-the-fly:", err);
-  }
-
-  const { data, error } = await supabase
-    .from("matches")
-    .select(
-      `
-      *,
-      league:leagues(*),
-      team1:teams!team1_id(*),
-      team2:teams!team2_id(*)
-    `,
-    )
-    .order("scheduled_at", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching matches:", error);
-    throw new Error(error.message);
-  }
-
-  return data as Match[];
-};
-
-/**
- * 2. 특정 상태(scheduled, live, completed)의 경기 일정만 조회합니다. (일반 사용자 조회용 - Public Client 사용)
- */
-export const getMatchesByStatus = async (status: Match["status"]): Promise<Match[]> => {
-  const { data, error } = await supabase
-    .from("matches")
-    .select(
-      `
-      *,
-      league:leagues(*),
-      team1:teams!team1_id(*),
-      team2:teams!team2_id(*)
-    `,
-    )
-    .eq("status", status)
-    .order("scheduled_at", { ascending: true });
-
-  if (error) {
-    console.error(`Error fetching matches with status ${status}:`, error);
-    throw new Error(error.message);
-  }
-
-  return data as Match[];
-};
-
-/**
- * 3. 경기 스코어 및 상태를 업데이트합니다. (어드민 전용 - RLS 우회 Admin Client 사용)
- * Server Action이므로 서버 환경에서 비밀키(Service Role Key)를 안전하게 사용하여 실행됩니다.
- */
-export const updateMatchScore = async (
-  matchId: string,
-  team1Score: number,
-  team2Score: number,
-  status: Match["status"],
-  winnerId: string | null = null,
-  adminPassword?: string,
-  videoUrl: string | null = null,
-): Promise<Match[]> => {
-  const correctPassword = process.env.ADMIN_PASSWORD;
-
-  if (!correctPassword) {
-    throw new Error("서버에 관리자 비밀번호 환경 변수가 설정되지 않았습니다.");
-  }
-
-  if (!adminPassword || adminPassword !== correctPassword) {
-    throw new Error("올바르지 않은 관리자 비밀번호입니다.");
-  }
-
-  const { data, error } = await supabaseAdmin
-    .from("matches")
-    .update({
-      team1_score: team1Score,
-      team2_score: team2Score,
-      status,
-      winner_id: winnerId,
-      video_url: videoUrl,
-    })
-    .eq("id", matchId)
-    .select();
-
-  if (error) {
-    console.error("Error updating match score:", error);
-    throw new Error(error.message);
-  }
-
-  // 메인 및 어드민 페이지 캐시 갱신
-  revalidatePath("/");
-  revalidatePath("/admin");
-  return data as Match[];
-};
-
-/**
- * 4. 어드민 페이지의 useActionState 폼 제출을 처리하는 서버 액션입니다.
- */
-export const updateMatchScoreAction = async (
-  _prevState: FormState,
-  formData: FormData,
-): Promise<FormState> => {
-  const statusValue = formData.get("status") as Match["status"];
-  const team1ScoreValue = parseInt(formData.get("team1Score") as string, 10) || 0;
-  const team2ScoreValue = parseInt(formData.get("team2Score") as string, 10) || 0;
-  const winnerIdValue = formData.get("winnerId") as string | null;
-  const videoUrlValue = formData.get("videoUrl") as string | null;
-  const passwordValue = formData.get("adminPassword") as string;
-  const matchIdValue = formData.get("matchId") as string;
-
-  try {
-    await updateMatchScore(
-      matchIdValue,
-      team1ScoreValue,
-      team2ScoreValue,
-      statusValue,
-      statusValue === "completed" ? winnerIdValue || null : null,
-      passwordValue,
-      videoUrlValue ? videoUrlValue.trim() : null,
+  const token = process.env.PANDASCORE_API_TOKEN;
+  if (!token) {
+    console.error(
+      "❌ PANDASCORE_API_TOKEN이 .env.local에 설정되지 않았거나 개발 서버 재기동(npm run dev)이 필요합니다.",
     );
-    return { success: true, message: "저장 완료!" };
+    return [];
+  }
+
+  try {
+    // LCK 2026 시리즈(ID: 10419) 매치 데이터를 오름차순 정렬하여 획득
+    const res = await fetch(
+      `https://api.pandascore.co/lol/matches?filter[serie_id]=10419&token=${token}&per_page=100&sort=scheduled_at`,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      },
+    );
+
+    if (!res.ok) {
+      console.error(`❌ PandaScore API 호출 실패 (Status: ${res.status} ${res.statusText})`);
+      try {
+        const errorDetails = await res.json();
+        console.error("PandaScore Error Details:", errorDetails);
+      } catch {}
+      return [];
+    }
+
+    const rawMatches = await res.json();
+    if (!Array.isArray(rawMatches)) {
+      console.error("❌ PandaScore API가 배열 형식을 반환하지 않았습니다:", rawMatches);
+      return [];
+    }
+
+    // PandaScore API 원본 데이터를 기존 UI 타입으로 어댑팅
+    return rawMatches.map(adaptPandaScoreMatch);
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : "오류가 발생했습니다.";
-    return { success: false, message: errMsg };
+    console.error("❌ getMatches fetch 중 예외 발생:", error);
+    return [];
   }
 };
