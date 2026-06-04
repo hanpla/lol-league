@@ -27,7 +27,6 @@ export interface Match {
   winner_id: string | null;
   match_type: string;
   stage: string;
-  video_url: string | null;
   created_at: string;
 
   // Relations
@@ -35,13 +34,3 @@ export interface Match {
   team1?: Team;
   team2?: Team;
 }
-
-export interface FormState {
-  success: boolean;
-  message: string;
-}
-
-export const INITIAL_FORM_STATE: FormState = {
-  success: false,
-  message: "",
-};
