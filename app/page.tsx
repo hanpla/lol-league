@@ -27,6 +27,9 @@ async function MatchDashboardContainer({ searchParams }: SearchParamsProps) {
   // Filter matches by the selected month AND league
   const filteredMatches = filterMatches(allMatches, selectedMonth, selectedLeague);
 
+  // 사용자가 파라미터 없이 처음 도달했거나, 현재 월(6월) 페이지를 보고 있는 경우 자동 스크롤 활성화
+  const isInitialEntry = !month || parseInt(month, 10) === currentMonth;
+
   return (
     <>
       {/* Month Navigation Tabs Component */}
@@ -40,7 +43,7 @@ async function MatchDashboardContainer({ searchParams }: SearchParamsProps) {
       <LeagueTabs selectedMonth={selectedMonth} selectedLeague={selectedLeague} />
 
       {/* Grouped Match List Component */}
-      <MatchList matches={filteredMatches} />
+      <MatchList matches={filteredMatches} isInitialEntry={isInitialEntry} />
     </>
   );
 }
