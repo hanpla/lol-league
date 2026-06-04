@@ -6,7 +6,8 @@ interface MonthTabsProps {
   selectedLeague: string;
 }
 
-export default function MonthTabs({ currentMonth, selectedMonth, selectedLeague }: MonthTabsProps) {
+export default function MonthTabs({ selectedMonth, selectedLeague }: MonthTabsProps) {
+  const currentMonth = new Date().getMonth() + 1;
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
