@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Match } from "@/types/match";
 import TeamLogo from "./TeamLogo";
 import LocalTime from "@/components/common/LocalTime";
@@ -60,28 +59,6 @@ const StatusBadge = ({ status }: { status: Match["status"] }) => {
     </span>
   );
 };
-
-const VodPanel = ({ videoUrl }: { videoUrl: string | null }) => (
-  <div className="border-t border-neutral-100 bg-neutral-50/50 py-3 text-center dark:border-neutral-800/60 dark:bg-neutral-900/10">
-    {videoUrl ? (
-      <div className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-        하이라이트:{" "}
-        <a
-          href={videoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-bold text-neutral-900 hover:underline dark:text-neutral-50"
-        >
-          [링크]
-        </a>
-      </div>
-    ) : (
-      <div className="text-xs font-medium text-neutral-400 dark:text-neutral-600">
-        vod: 등록된 영상이 없습니다
-      </div>
-    )}
-  </div>
-);
 
 interface MobileTeamRowProps {
   team: Match["team1"];
@@ -173,17 +150,13 @@ const DesktopMatchup = ({
 // --- Main component ---
 
 export default function MatchCard({ match }: MatchCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const isLive = match.status === "live";
   const isCompleted = match.status === "completed";
   const isTeam1Winner = isCompleted && match.winner_id === match.team1_id;
   const isTeam2Winner = isCompleted && match.winner_id === match.team2_id;
 
   return (
-    <div
-      onClick={() => setIsExpanded(!isExpanded)}
-      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-sm transition-all duration-300 hover:bg-neutral-50/80 dark:border-neutral-900 dark:bg-neutral-900/20 dark:shadow-none dark:hover:bg-neutral-900/40"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-sm transition-all duration-300 dark:border-neutral-900 dark:bg-neutral-900/20 dark:shadow-none">
       {isLive && (
         <div className="absolute top-0 bottom-0 left-0 w-[3px] animate-pulse bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
       )}
@@ -239,13 +212,6 @@ export default function MatchCard({ match }: MatchCardProps) {
           <span>{match.stage}</span>
         </div>
       </div>
-
-      {/* Expanded VOD panel */}
-      {isExpanded && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <VodPanel videoUrl={match.video_url} />
-        </div>
-      )}
     </div>
   );
 }
