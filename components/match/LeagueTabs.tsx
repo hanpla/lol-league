@@ -1,8 +1,7 @@
-import Link from "next/link";
-
 interface LeagueTabsProps {
   selectedMonth: number;
   selectedLeague: string;
+  onLeagueSelect: (league: string) => void;
 }
 
 const LEAGUE = [
@@ -10,18 +9,17 @@ const LEAGUE = [
   { name: "LCK", code: "LCK" },
 ];
 
-export default function LeagueTabs({ selectedMonth, selectedLeague }: LeagueTabsProps) {
+export default function LeagueTabs({ selectedLeague, onLeagueSelect }: LeagueTabsProps) {
   return (
     <section className="mb-8 flex flex-wrap justify-center gap-2">
       {LEAGUE.map((league) => {
         const isSelected = selectedLeague === league.code;
-        // Build URL preserving the selected month
-        const href = `/?month=${selectedMonth}${league.code !== "all" ? `&league=${league.code}` : ""}`;
 
         return (
-          <Link
+          <button
             key={league.code}
-            href={href}
+            type="button"
+            onClick={() => onLeagueSelect(league.code)}
             className={`cursor-pointer rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
               isSelected
                 ? "border-neutral-900 bg-neutral-900 text-neutral-50 shadow-sm dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-950"
@@ -29,7 +27,7 @@ export default function LeagueTabs({ selectedMonth, selectedLeague }: LeagueTabs
             }`}
           >
             {league.name}
-          </Link>
+          </button>
         );
       })}
     </section>

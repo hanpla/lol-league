@@ -1,12 +1,10 @@
-import Link from "next/link";
-
 interface MonthTabsProps {
-  currentMonth: number;
   selectedMonth: number;
   selectedLeague: string;
+  onMonthSelect: (month: number) => void;
 }
 
-export default function MonthTabs({ selectedMonth, selectedLeague }: MonthTabsProps) {
+export default function MonthTabs({ selectedMonth, onMonthSelect }: MonthTabsProps) {
   const currentMonth = new Date().getMonth() + 1;
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -18,21 +16,19 @@ export default function MonthTabs({ selectedMonth, selectedLeague }: MonthTabsPr
           const isSelected = m === selectedMonth;
 
           if (isActive) {
-            // Preserve the active league parameter when switching months
-            const href = `/?month=${m}${selectedLeague !== "all" ? `&league=${selectedLeague}` : ""}`;
-
             return (
-              <Link
+              <button
                 key={m}
-                href={href}
-                className={`rounded-lg px-3 py-2 text-center text-sm font-semibold transition-all duration-200 sm:px-0 ${
+                type="button"
+                onClick={() => onMonthSelect(m)}
+                className={`cursor-pointer rounded-lg px-3 py-2 text-center text-sm font-semibold transition-all duration-200 sm:px-0 ${
                   isSelected
                     ? "bg-neutral-900 text-neutral-50 shadow-sm dark:bg-neutral-100 dark:text-neutral-950"
                     : "text-neutral-600 hover:bg-neutral-200/60 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800/60 dark:hover:text-neutral-50"
                 }`}
               >
                 {m}월
-              </Link>
+              </button>
             );
           } else {
             return (
