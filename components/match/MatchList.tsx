@@ -46,9 +46,17 @@ export default function MatchList({ matches, isInitialEntry = false }: MatchList
     });
   }
 
-  // 컴포넌트 마운트 시 지정된 targetIndex 요소로 스크롤을 내립니다 (최초 진입 시에만 동작).
+  // 컴포넌트 마운트 시 지정된 targetIndex 요소로 스크롤을 내립니다 (최초 진입 시 딱 1회만 동작).
+  const hasScrolledRef = useRef(false);
+
   useEffect(() => {
-    if (isInitialEntry && targetIndex !== -1 && itemRefs.current[targetIndex]) {
+    if (
+      isInitialEntry &&
+      !hasScrolledRef.current &&
+      targetIndex !== -1 &&
+      itemRefs.current[targetIndex]
+    ) {
+      hasScrolledRef.current = true; // 최초 1회 실행 완료 마킹
       // 조금의 브라우저 레이아웃 계산 여유를 주기 위해 setTimeout 활용
       const timer = setTimeout(() => {
         const targetElement = itemRefs.current[targetIndex];
