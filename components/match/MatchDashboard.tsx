@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Match } from "@/types/match";
 import MonthTabs from "./MonthTabs";
 import LeagueTabs from "./LeagueTabs";
@@ -14,6 +14,16 @@ interface MatchDashboardProps {
 
 export default function MatchDashboard({ allMatches }: MatchDashboardProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // 최초 접속 시 서버 측의 SWR 백그라운드 캐시 갱신(수백ms) 시간을 고려해 2초 뒤 1회 자동 새로고침(refresh) 수행
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.refresh();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [router]);
 
   // KST(UTC+9) 기준 현재 월 계산 (초기 렌더링 대입용)
   const now = new Date();
