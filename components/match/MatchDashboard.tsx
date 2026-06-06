@@ -41,7 +41,7 @@ export default function MatchDashboard({ allMatches }: MatchDashboardProps) {
       params.set("league", league);
     }
     const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
+    window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
   };
 
   // 월 탭 변경 핸들러
