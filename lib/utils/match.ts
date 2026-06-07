@@ -28,3 +28,11 @@ export const filterMatches = (
     return matchesMonth && matchesLeague;
   });
 };
+
+/**
+ * 3. 전체 매치 목록에서 경기가 있는 월 목록을 중복 없이 추출합니다.
+ */
+export const extractActiveMonths = (matches: Match[]): number[] => {
+  const months = matches.map((match) => parseInt(match.scheduled_at.slice(5, 7), 10));
+  return Array.from(new Set(months)).sort((a, b) => a - b);
+};

@@ -19,3 +19,11 @@ export const formatMatchTime = (dateString: string): string => {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
 };
+
+/**
+ * KST(UTC+9) 기준 현재 월을 반환합니다.
+ */
+export const getCurrentKstMonth = (): number => {
+  const now = new Date();
+  return new Date(now.getTime() + 9 * 60 * 60 * 1000).getUTCMonth() + 1;
+};
