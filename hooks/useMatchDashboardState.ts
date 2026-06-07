@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Match } from "@/types/match";
-import {
-  parseMatchSearchParams,
-  filterMatches,
-  extractActiveMonths,
-} from "@/lib/utils/match";
+import { parseMatchSearchParams, filterMatches, extractActiveMonths } from "@/lib/utils/match";
 import { getCurrentKstMonth } from "@/lib/utils/date";
 
 export function useMatchDashboardState(allMatches: Match[]) {
@@ -29,13 +25,21 @@ export function useMatchDashboardState(allMatches: Match[]) {
   const [selectedMonth, setSelectedMonth] = useState<number>(initMonth);
   const [selectedLeague, setSelectedLeague] = useState<string>(initLeague);
 
-  // 최초 접속 시 서버 측의 SWR 백그라운드 캐시 갱신(수백ms) 시간을 고려해 2초 뒤 1회 자동 새로고침(refresh) 수행
+  // 최초 접속 시 서버 측의 SWR 백그라운드 캐시 갱신(수백ms) 시간을 고려해
+  // 2초 뒤에 1차 새로고침, 4초 뒤에 2차 새로고침(한 번 더)을 자동 수행하여 최신 데이터가 더 안전하게 반영되도록 합니다.
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer1 = setTimeout(() => {
       router.refresh();
     }, 2000);
 
-    return () => clearTimeout(timer);
+    const timer2 = setTimeout(() => {
+      router.refresh();
+    }, 4000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, [router]);
 
   // URL 쿼리 스트링 동기화 함수 (Next.js 서버 패치를 유발하지 않고 주소창만 업데이트)
