@@ -4,8 +4,13 @@ import { Match } from "@/types/match";
 import { adaptPandaScoreMatch } from "@/lib/utils/adapter";
 import { cacheLife } from "next/cache";
 
+const SERIES_IDS = {
+  LCK_2026: 10419,
+  MSI_2026: 10676,
+} as const;
+
 /**
- * LCK 2026 대회 일정을 PandaScore API에서 직접 조회합니다.
+ * LCK 2026 및 MSI 2026 대회 일정을 PandaScore API에서 직접 조회합니다.
  * Next.js의 use cache와 cacheLife를 활용하여 5분 캐시를 적용합니다.
  */
 export const getMatches = async (): Promise<Match[]> => {
@@ -24,9 +29,9 @@ export const getMatches = async (): Promise<Match[]> => {
   }
 
   try {
-    // LCK 2026 시리즈(ID: 10419) 매치 데이터를 오름차순 정렬하여 획득
+    const serieIdsParam = Object.values(SERIES_IDS).join(",");
     const res = await fetch(
-      `https://api.pandascore.co/lol/matches?filter[serie_id]=10419&token=${token}&per_page=100&sort=scheduled_at`,
+      `https://api.pandascore.co/lol/matches?filter[serie_id]=${serieIdsParam}&token=${token}&per_page=100&sort=scheduled_at`,
       {
         headers: {
           Accept: "application/json",

@@ -4,7 +4,7 @@ import { Match } from "@/types/match";
 import { parseMatchSearchParams, filterMatches, extractActiveMonths } from "@/lib/utils/match";
 import { getCurrentKstMonth } from "@/lib/utils/date";
 
-export function useMatchDashboardState(allMatches: Match[]) {
+export const useMatchDashboardState = (allMatches: Match[]) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 

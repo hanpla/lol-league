@@ -7,6 +7,7 @@ interface LeagueTabsProps {
 const LEAGUE = [
   { name: "전체", code: "all" },
   { name: "LCK", code: "LCK" },
+  { name: "MSI", code: "MSI" },
 ];
 
 export default function LeagueTabs({ selectedLeague, onLeagueSelect }: LeagueTabsProps) {

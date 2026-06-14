@@ -47,10 +47,25 @@ export const adaptPandaScoreMatch = (raw: PandaScoreMatch): Match => {
     logo_url: team2Raw?.image_url || null,
   };
 
+  const rawLeagueName = raw.league?.name || "Unknown League";
+  const slugUpper = raw.league?.slug?.toUpperCase() || "";
+  const nameUpper = rawLeagueName.toUpperCase();
+  const isMSI =
+    slugUpper.includes("MSI") ||
+    slugUpper.includes("MID-INVITATIONAL") ||
+    slugUpper.includes("MID-SEASON") ||
+    nameUpper.includes("MID-SEASON") ||
+    nameUpper.includes("INVITATIONAL") ||
+    nameUpper.includes("MSI");
+
   const league: League = {
     id: raw.league?.id?.toString() || "unknown-league",
-    name: raw.league?.name || "Unknown League",
-    code: raw.league?.slug?.toUpperCase()?.includes("LCK") ? "LCK" : raw.league?.name || "League",
+    name: isMSI ? "MSI" : rawLeagueName,
+    code: raw.league?.slug?.toUpperCase()?.includes("LCK")
+      ? "LCK"
+      : isMSI
+      ? "MSI"
+      : rawLeagueName,
     season: raw.serie?.full_name || "",
     logo_url: raw.league?.image_url || null,
     start_date: raw.serie?.begin_at || null,
