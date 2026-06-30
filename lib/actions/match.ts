@@ -1,6 +1,7 @@
 "use server";
 
 import { Match } from "@/types/match";
+import { PandaScoreMatch } from "@/types/pandascore";
 import { adaptPandaScoreMatch } from "@/lib/utils/adapter";
 import { cacheLife } from "next/cache";
 
@@ -8,6 +9,27 @@ const SERIES_IDS = {
   LCK_2026: 10419,
   MSI_2026: 10676,
 } as const;
+
+/**
+ * 특정 페이지의 PandaScore 매치 데이터를 조회하는 공통 헬퍼 함수입니다.
+ */
+const fetchPage = async (page: number, token: string, serieIdsParam: string): Promise<PandaScoreMatch[]> => {
+  const res = await fetch(
+    `https://api.pandascore.co/lol/matches?filter[serie_id]=${serieIdsParam}&token=${token}&per_page=100&page=${page}&sort=scheduled_at`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`PandaScore API page ${page} failed: ${res.status} ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+};
 
 /**
  * LCK 2026 및 MSI 2026 대회 일정을 PandaScore API에서 직접 조회합니다.
@@ -30,29 +52,15 @@ export const getMatches = async (): Promise<Match[]> => {
 
   try {
     const serieIdsParam = Object.values(SERIES_IDS).join(",");
-    const res = await fetch(
-      `https://api.pandascore.co/lol/matches?filter[serie_id]=${serieIdsParam}&token=${token}&per_page=100&sort=scheduled_at`,
-      {
-        headers: {
-          Accept: "application/json",
-        },
-      },
-    );
+    
+    // 100개 제한으로 밀려난 7월 매치 데이터를 유실 없이 수집하기 위해
+    // 1페이지와 2페이지 데이터를 병렬(Promise.all)로 병합 수집합니다.
+    const [page1, page2] = await Promise.all([
+      fetchPage(1, token, serieIdsParam),
+      fetchPage(2, token, serieIdsParam),
+    ]);
 
-    if (!res.ok) {
-      console.error(`❌ PandaScore API 호출 실패 (Status: ${res.status} ${res.statusText})`);
-      try {
-        const errorDetails = await res.json();
-        console.error("PandaScore Error Details:", errorDetails);
-      } catch {}
-      return [];
-    }
-
-    const rawMatches = await res.json();
-    if (!Array.isArray(rawMatches)) {
-      console.error("❌ PandaScore API가 배열 형식을 반환하지 않았습니다:", rawMatches);
-      return [];
-    }
+    const rawMatches = [...page1, ...page2];
 
     // PandaScore API 원본 데이터를 기존 UI 타입으로 어댑팅
     return rawMatches.map(adaptPandaScoreMatch);
