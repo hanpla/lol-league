@@ -113,7 +113,7 @@ const DesktopMatchup = ({
   isTeam1Winner,
   isTeam2Winner,
 }: DesktopMatchupProps) => (
-  <div className="hidden flex-1 items-center justify-center gap-6 lg:flex">
+  <div className="hidden flex-1 items-center justify-center gap-4 lg:flex">
     {/* Team 1 */}
     <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
       <span className={`truncate ${getTeamNameClass(isCompleted, isTeam1Winner, "base")}`}>
@@ -164,7 +164,7 @@ export default function MatchCard({ match }: MatchCardProps) {
       {/* Main card row */}
       <div className="flex items-center justify-between gap-4 p-4">
         {/* Time & Status Block */}
-        <div className="flex w-16 shrink-0 flex-col items-start gap-0.5 sm:w-20">
+        <div className="flex w-16 shrink-0 flex-col items-start gap-0.5 sm:w-20 lg:w-16">
           <span className="text-[9px] leading-none font-extrabold tracking-wider text-neutral-400 uppercase dark:text-neutral-500">
             {match.league?.code}
           </span>
@@ -208,7 +208,7 @@ export default function MatchCard({ match }: MatchCardProps) {
         />
 
         {/* Stage details (Hidden on mobile, visible from sm) */}
-        <div className="hidden w-20 shrink-0 items-center justify-end text-[10px] font-semibold text-neutral-400 sm:flex lg:w-24 lg:text-[11px] dark:text-neutral-500">
+        <div className="hidden w-20 shrink-0 items-center justify-end text-[10px] font-semibold text-neutral-400 sm:flex lg:w-16 lg:text-[11px] dark:text-neutral-500">
           <span>{match.stage}</span>
         </div>
       </div>
