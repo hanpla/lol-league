@@ -58,13 +58,21 @@ export const adaptPandaScoreMatch = (raw: PandaScoreMatch): Match => {
     nameUpper.includes("INVITATIONAL") ||
     nameUpper.includes("MSI");
 
+  const isEWC =
+    slugUpper.includes("ESPORTS-WORLD-CUP") ||
+    slugUpper.includes("EWC") ||
+    nameUpper.includes("ESPORTS WORLD CUP") ||
+    nameUpper.includes("EWC");
+
   const league: League = {
     id: raw.league?.id?.toString() || "unknown-league",
-    name: isMSI ? "MSI" : rawLeagueName,
+    name: isMSI ? "MSI" : isEWC ? "EWC" : rawLeagueName,
     code: raw.league?.slug?.toUpperCase()?.includes("LCK")
       ? "LCK"
       : isMSI
       ? "MSI"
+      : isEWC
+      ? "EWC"
       : rawLeagueName,
     season: raw.serie?.full_name || "",
     logo_url: raw.league?.image_url || null,

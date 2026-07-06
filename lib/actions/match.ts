@@ -8,6 +8,7 @@ import { cacheLife } from "next/cache";
 const SERIES_IDS = {
   LCK_2026: 10419,
   MSI_2026: 10676,
+  EWC_2026: 10765,
 } as const;
 
 /**
@@ -32,7 +33,7 @@ const fetchPage = async (page: number, token: string, serieIdsParam: string): Pr
 };
 
 /**
- * LCK 2026 및 MSI 2026 대회 일정을 PandaScore API에서 직접 조회합니다.
+ * LCK 2026, MSI 2026 및 EWC 2026 대회 일정을 PandaScore API에서 직접 조회합니다.
  * Next.js의 use cache와 cacheLife를 활용하여 5분 캐시를 적용합니다.
  */
 export const getMatches = async (): Promise<Match[]> => {

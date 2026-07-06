@@ -8,6 +8,7 @@ const LEAGUE = [
   { name: "전체", code: "all" },
   { name: "LCK", code: "LCK" },
   { name: "MSI", code: "MSI" },
+  { name: "EWC", code: "EWC" },
 ];
 
 export default function LeagueTabs({ selectedLeague, onLeagueSelect }: LeagueTabsProps) {
