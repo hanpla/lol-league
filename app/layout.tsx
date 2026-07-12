@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import ThemeProvider from "@/components/providers/ThemeProvider";
+import ScrollButtons from "@/components/match/ScrollButtons";
 import "./globals.css";
 
 const pretendard = localFont({
@@ -24,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable} antialiased`} suppressHydrationWarning>
       <body className="flex min-h-full flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <ScrollButtons />
+        </ThemeProvider>
       </body>
     </html>
   );
