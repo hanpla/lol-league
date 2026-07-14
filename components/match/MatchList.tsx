@@ -87,13 +87,15 @@ export default function MatchList({ matches, isInitialEntry = false }: MatchList
         return (
           <div
             key={dateStr}
-            ref={(el) => {
-              itemRefs.current[index] = el;
-            }}
             className="scroll-mt-20 space-y-4"
           >
             {/* Date Header */}
-            <div className="text-center">
+            <div
+              ref={(el) => {
+                itemRefs.current[index] = el;
+              }}
+              className="text-center"
+            >
               <h2
                 className="mt-0.5 text-lg font-bold text-neutral-800 dark:text-neutral-200"
                 suppressHydrationWarning
