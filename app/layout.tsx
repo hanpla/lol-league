@@ -1,16 +1,9 @@
 import { ReactNode } from "react";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import ScrollButtons from "@/components/match/ScrollButtons";
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
-
-const pretendard = localFont({
-  src: "./fonts/PretendardVariable.woff2",
-  display: "swap",
-  weight: "45 920",
-  variable: "--font-pretendard",
-});
 
 export const metadata: Metadata = {
   title: "롤 리그",
@@ -26,7 +19,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${pretendard.variable} antialiased`} suppressHydrationWarning>
+    <html lang="ko" className="antialiased" suppressHydrationWarning>
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
           {children}

@@ -31,11 +31,20 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
   // 이 방식은 router.refresh()와 달리 URL 쿼리나 히스토리를 전혀 방해하지 않습니다.
   useEffect(() => {
     let isMounted = true;
-    getMatches().then((freshMatches) => {
-      if (isMounted && freshMatches && freshMatches.length > 0) {
-        setMatches(freshMatches);
+
+    const fetchFreshMatches = async () => {
+      try {
+        const freshMatches = await getMatches();
+        if (isMounted && freshMatches && freshMatches.length > 0) {
+          setMatches(freshMatches);
+        }
+      } catch (error) {
+        console.error("실시간 경기 정보 갱신 실패:", error);
       }
-    });
+    };
+
+    fetchFreshMatches();
+
     return () => {
       isMounted = false;
     };
