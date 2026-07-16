@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Match } from "@/types/match";
 import { parseMatchSearchParams, filterMatches, extractActiveMonths } from "@/lib/utils/match";
 import { getCurrentKstMonth } from "@/lib/utils/date";
+import { getMatches } from "@/lib/actions/match";
 
 export const useMatchDashboardState = (allMatches: Match[]) => {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   // KST(UTC+9) 기준 현재 월 계산
   const kstMonth = getCurrentKstMonth();
@@ -24,23 +24,22 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
   // 로컬 React 상태 관리
   const [selectedMonth, setSelectedMonth] = useState<number>(initMonth);
   const [selectedLeague, setSelectedLeague] = useState<string>(initLeague);
+  const [matches, setMatches] = useState<Match[]>(allMatches);
 
-  // 최초 접속 시 서버 측의 SWR 백그라운드 캐시 갱신(수백ms) 시간을 고려해
-  // 2초 뒤에 1차 새로고침, 4초 뒤에 2차 새로고침(한 번 더)을 자동 수행하여 최신 데이터가 더 안전하게 반영되도록 합니다.
+  // 최초 접속 시, 서버 측 SWR 캐시 갱신 반영을 위해 브라우저 마운트 직후 
+  // getMatches 서버 액션을 비동기로 직접 호출하여 데이터를 최신화합니다.
+  // 이 방식은 router.refresh()와 달리 URL 쿼리나 히스토리를 전혀 방해하지 않습니다.
   useEffect(() => {
-    const timer1 = setTimeout(() => {
-      router.refresh();
-    }, 2000);
-
-    const timer2 = setTimeout(() => {
-      router.refresh();
-    }, 4000);
-
+    let isMounted = true;
+    getMatches().then((freshMatches) => {
+      if (isMounted && freshMatches && freshMatches.length > 0) {
+        setMatches(freshMatches);
+      }
+    });
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
+      isMounted = false;
     };
-  }, [router]);
+  }, []);
 
   // URL 쿼리 스트링 동기화 함수 (Next.js 서버 패치를 유발하지 않고 주소창만 업데이트)
   const syncUrlParams = (month: number, league: string) => {
@@ -66,10 +65,10 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
   };
 
   // 클라이언트 단에서 0ms 만에 즉각 필터링 수행
-  const filteredMatches = filterMatches(allMatches, selectedMonth, selectedLeague);
+  const filteredMatches = filterMatches(matches, selectedMonth, selectedLeague);
 
   // 경기가 존재하는 월 목록 추출
-  const activeMonths = extractActiveMonths(allMatches);
+  const activeMonths = extractActiveMonths(matches);
 
   // 최초 진입 시 스크롤 작동 조건 계산
   const urlMonthParam = searchParams.get("month");
