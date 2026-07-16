@@ -5,18 +5,19 @@ interface MonthTabsProps {
   activeMonths: number[];
 }
 
+const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
 export default function MonthTabs({
   selectedMonth,
   onMonthSelect,
   activeMonths,
 }: MonthTabsProps) {
   const currentMonth = new Date().getMonth() + 1;
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
     <section className="mb-6">
       <div className="flex flex-wrap justify-center gap-1 rounded-xl border border-neutral-200 bg-neutral-200/30 p-1.5 transition-colors duration-300 sm:grid sm:grid-cols-6 md:grid-cols-12 dark:border-neutral-800 dark:bg-neutral-900/40">
-        {months.map((m) => {
+        {MONTHS.map((m) => {
           const isActive = m <= currentMonth || activeMonths.includes(m);
           const isSelected = m === selectedMonth;
 

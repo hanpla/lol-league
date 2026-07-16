@@ -7,13 +7,16 @@ const SkeletonPulse = ({ className }: { className?: string }) => {
   );
 };
 
+const SKELETON_MONTHS = Array.from({ length: 12 }, (_, i) => i);
+const SKELETON_LEAGUES = [1, 2, 3];
+
 export default function MatchDashboardSkeleton() {
   return (
     <div className="space-y-6">
       {/* Month Navigation Tabs Skeleton */}
       <section className="mb-6">
         <div className="flex flex-wrap justify-center gap-1 rounded-xl border border-neutral-200 bg-neutral-200/30 p-1.5 sm:grid sm:grid-cols-6 md:grid-cols-12 dark:border-neutral-800 dark:bg-neutral-900/40">
-          {Array.from({ length: 12 }).map((_, i) => (
+          {SKELETON_MONTHS.map((i) => (
             <SkeletonPulse key={i} className="h-9 rounded-lg" />
           ))}
         </div>
@@ -21,7 +24,7 @@ export default function MatchDashboardSkeleton() {
 
       {/* League Filtering Tabs Skeleton */}
       <section className="mb-8 flex flex-wrap justify-center gap-2">
-        {[1, 2, 3].map((i) => (
+        {SKELETON_LEAGUES.map((i) => (
           <SkeletonPulse key={i} className="h-7 w-16 rounded-full" />
         ))}
       </section>

@@ -157,9 +157,9 @@ export default function MatchCard({ match }: MatchCardProps) {
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-sm transition-all duration-300 dark:border-neutral-900 dark:bg-neutral-900/20 dark:shadow-none">
-      {isLive && (
+      {isLive ? (
         <div className="absolute top-0 bottom-0 left-0 w-[3px] animate-pulse bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-      )}
+      ) : null}
 
       {/* Main card row */}
       <div className="flex items-center justify-between gap-4 p-4">

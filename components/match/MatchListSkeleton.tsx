@@ -20,6 +20,8 @@ const SkeletonBox = ({ className }: { className?: string }) => {
   return <SkeletonPulse className={`rounded-lg ${className || ""}`} />;
 };
 
+const SKELETON_CARDS = [1, 2, 3];
+
 export default function MatchListSkeleton() {
   // 3개의 카드 형태의 로딩 스켈레톤을 렌더링합니다.
   return (
@@ -32,7 +34,7 @@ export default function MatchListSkeleton() {
 
         {/* Matches List Skeleton */}
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {SKELETON_CARDS.map((i) => (
             <div
               key={i}
               className="relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-neutral-200/80 bg-white p-4 shadow-sm dark:border-neutral-900 dark:bg-neutral-900/20 dark:shadow-none"
