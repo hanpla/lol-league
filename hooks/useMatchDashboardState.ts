@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Match } from "@/types/match";
-import { parseMatchSearchParams, filterMatches, extractActiveMonths } from "@/lib/utils/match";
+import {
+  parseMatchSearchParams,
+  filterMatches,
+  extractActiveMonths,
+  getDefaultMatchMonth,
+} from "@/lib/utils/match";
 import { getCurrentKstMonth } from "@/lib/utils/date";
 import { getMatches } from "@/lib/actions/match";
 
 export const useMatchDashboardState = (allMatches: Match[]) => {
   const searchParams = useSearchParams();
 
-  // KST(UTC+9) 기준 현재 월 계산
+  // KST(UTC+9) 기준 현재 월 및 기본 선택 월(가장 가까운 예정 경기 월) 계산
   const kstMonth = getCurrentKstMonth();
+  const defaultMonth = getDefaultMatchMonth(allMatches, kstMonth);
 
   // URL에서 초기 파라미터 읽어오기
   const initialMonthParam = searchParams.get("month") || undefined;
@@ -18,7 +24,7 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
   const { selectedMonth: initMonth, selectedLeague: initLeague } = parseMatchSearchParams(
     initialMonthParam,
     initialLeagueParam,
-    kstMonth,
+    defaultMonth,
   );
 
   // 로컬 React 상태 관리
@@ -26,7 +32,7 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
   const [selectedLeague, setSelectedLeague] = useState<string>(initLeague);
   const [matches, setMatches] = useState<Match[]>(allMatches);
 
-  // 최초 접속 시, 서버 측 SWR 캐시 갱신 반영을 위해 브라우저 마운트 직후 
+  // 최초 접속 시, 서버 측 SWR 캐시 갱신 반영을 위해 브라우저 마운트 직후
   // getMatches 서버 액션을 비동기로 직접 호출하여 데이터를 최신화합니다.
   // 이 방식은 router.refresh()와 달리 URL 쿼리나 히스토리를 전혀 방해하지 않습니다.
   useEffect(() => {
@@ -37,6 +43,11 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
         const freshMatches = await getMatches();
         if (isMounted && freshMatches && freshMatches.length > 0) {
           setMatches(freshMatches);
+          // 만약 초기 SSR 데이터가 비어있었고 URL 파라미터가 없었다면 실시간 데이터 기준으로 기본 월 갱신
+          if (!initialMonthParam && allMatches.length === 0) {
+            const freshDefaultMonth = getDefaultMatchMonth(freshMatches, kstMonth);
+            setSelectedMonth(freshDefaultMonth);
+          }
         }
       } catch (error) {
         console.error("실시간 경기 정보 갱신 실패:", error);
@@ -48,7 +59,7 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [allMatches.length, initialMonthParam, kstMonth]);
 
   // URL 쿼리 스트링 동기화 함수 (Next.js 서버 패치를 유발하지 않고 주소창만 업데이트)
   const syncUrlParams = (month: number, league: string) => {
@@ -81,7 +92,7 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
 
   // 최초 진입 시 스크롤 작동 조건 계산
   const urlMonthParam = searchParams.get("month");
-  const isInitialEntry = !urlMonthParam || parseInt(urlMonthParam, 10) === kstMonth;
+  const isInitialEntry = !urlMonthParam || parseInt(urlMonthParam, 10) === initMonth;
 
   return {
     selectedMonth,
@@ -92,4 +103,4 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
     handleMonthSelect,
     handleLeagueSelect,
   };
-}
+};
