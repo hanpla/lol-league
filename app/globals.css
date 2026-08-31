@@ -13,8 +13,10 @@ html {
 }
 
 .scroll-floating-widget {
-  opacity: 0.8;
-  transition: opacity 0.3s ease, transform 0.2s ease;
+  opacity: 0.3;
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease;
 }
 
 .scroll-floating-widget:hover {
@@ -23,6 +25,6 @@ html {
 
 @media (min-width: 912px) {
   .scroll-floating-widget {
-    opacity: 0.3;
+    opacity: 0.8;
   }
 }
