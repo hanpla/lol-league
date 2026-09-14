@@ -14,14 +14,19 @@ const SERIES_IDS = {
 /**
  * 특정 페이지의 PandaScore 매치 데이터를 조회하는 공통 헬퍼 함수입니다.
  */
-const fetchPage = async (page: number, token: string, serieIdsParam: string): Promise<PandaScoreMatch[]> => {
+const fetchPage = async (
+  page: number,
+  token: string,
+  serieIdsParam: string,
+): Promise<PandaScoreMatch[]> => {
   const res = await fetch(
-    `https://api.pandascore.co/lol/matches?filter[serie_id]=${serieIdsParam}&token=${token}&per_page=100&page=${page}&sort=scheduled_at`,
+    `https://api.pandascore.co/lol/matches?filter[serie_id]=${serieIdsParam}&per_page=100&page=${page}&sort=scheduled_at`,
     {
       headers: {
         Accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   if (!res.ok) {
@@ -53,7 +58,7 @@ export const getMatches = async (): Promise<Match[]> => {
 
   try {
     const serieIdsParam = Object.values(SERIES_IDS).join(",");
-    
+
     // 100개 제한으로 밀려난 7월 매치 데이터를 유실 없이 수집하기 위해
     // 1페이지와 2페이지 데이터를 병렬(Promise.all)로 병합 수집합니다.
     const [page1, page2] = await Promise.all([
