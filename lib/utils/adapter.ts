@@ -70,10 +70,10 @@ export const adaptPandaScoreMatch = (raw: PandaScoreMatch): Match => {
     code: raw.league?.slug?.toUpperCase()?.includes("LCK")
       ? "LCK"
       : isMSI
-      ? "MSI"
-      : isEWC
-      ? "EWC"
-      : rawLeagueName,
+        ? "MSI"
+        : isEWC
+          ? "EWC"
+          : rawLeagueName,
     season: raw.serie?.full_name || "",
     logo_url: raw.league?.image_url || null,
     start_date: raw.serie?.begin_at || null,

@@ -20,22 +20,26 @@ PandaScore LoL API를 직연동하고 Next.js 15+ 서버 메모리 캐싱을 접
 ## ⚡ Key Features (핵심 차별점)
 
 ### 1. 0ms 즉각적인 탭 전환 (Client-side Orchestration)
-* 월(Month) 탭 및 리그 탭 클릭 시 서버 왕복 네트워크 요청(RSC payload fetch)이 전혀 발생하지 않습니다.
-* 브라우저 메모리에 이미 로드된 경기 데이터를 리액트 내부 상태(`useState`)로 즉시 필터링하여 0.001초 만에 화면을 갱신하므로 배포 환경에서도 렉이 100% 제거됩니다.
-* `window.history.pushState`를 이용하여 페이지 리로드 및 서버 요청 없이 주소창 URL만 동기화하므로, 새로고침이나 공유 시에도 필터 상태가 그대로 유지됩니다.
+
+- 월(Month) 탭 및 리그 탭 클릭 시 서버 왕복 네트워크 요청(RSC payload fetch)이 전혀 발생하지 않습니다.
+- 브라우저 메모리에 이미 로드된 경기 데이터를 리액트 내부 상태(`useState`)로 즉시 필터링하여 0.001초 만에 화면을 갱신하므로 배포 환경에서도 렉이 100% 제거됩니다.
+- `window.history.pushState`를 이용하여 페이지 리로드 및 서버 요청 없이 주소창 URL만 동기화하므로, 새로고침이나 공유 시에도 필터 상태가 그대로 유지됩니다.
 
 ### 2. Next.js 15+ 서버 메모리 캐싱 (`use cache`)
-* PandaScore API 호출 결과를 Next.js 서버 메모리 레이어에 **5분간 강제 캐시(Stale-while-revalidate)**하여 사용자가 아무리 많아도 분당 API 호출 횟수(Rate Limit)를 철저히 보관 및 절약합니다.
-* `lib/actions/match.ts` 내에 `use cache` 지시어 및 `cacheLife` 설정을 적용하여 구현되었습니다.
+
+- PandaScore API 호출 결과를 Next.js 서버 메모리 레이어에 **5분간 강제 캐시(Stale-while-revalidate)**하여 사용자가 아무리 많아도 분당 API 호출 횟수(Rate Limit)를 철저히 보관 및 절약합니다.
+- `lib/actions/match.ts` 내에 `use cache` 지시어 및 `cacheLife` 설정을 적용하여 구현되었습니다.
 
 ### 3. 정밀 감속 스무스 스크롤 유틸 (`smoothScrollTo`)
-* 브라우저 내장 스크롤의 버그와 렉을 회피하기 위해, `requestAnimationFrame`과 `easeOutCubic` 가속 보정 공식을 이용해 직접 제작한 커스텀 스크롤 유틸을 탑재했습니다.
-* 최초 홈 진입 시 오늘 날짜(또는 가장 가까운 일정)가 있는 곳으로 부드럽고 묵직하게 자동 포커싱 다운됩니다.
-* 최초 진입 이후 탭을 바꿀 때는 스크롤이 고정되어 사용자 경험(UX)을 방해하지 않습니다.
+
+- 브라우저 내장 스크롤의 버그와 렉을 회피하기 위해, `requestAnimationFrame`과 `easeOutCubic` 가속 보정 공식을 이용해 직접 제작한 커스텀 스크롤 유틸을 탑재했습니다.
+- 최초 홈 진입 시 오늘 날짜(또는 가장 가까운 일정)가 있는 곳으로 부드럽고 묵직하게 자동 포커싱 다운됩니다.
+- 최초 진입 이후 탭을 바꿀 때는 스크롤이 고정되어 사용자 경험(UX)을 방해하지 않습니다.
 
 ### 4. LCK 팀명 한글화 매핑 및 스키마 어댑터
-* PandaScore API에서 넘어오는 길고 복잡한 영어 팀명들을 직관적이고 친숙한 LCK 한글 팀명(한화생명, 농심 레드포스, 한진 브리온, 키움 DRX 등)으로 어댑팅 단계에서 자동 번역하여 레이아웃 가독성을 극대화했습니다.
-* 복잡하고 중첩된 PandaScore의 API 응답 데이터 타입을 기존 UI 규격에 맞게 1:1로 가공해주는 전용 어댑터(`lib/utils/adapter.ts`)를 설계했습니다.
+
+- PandaScore API에서 넘어오는 길고 복잡한 영어 팀명들을 직관적이고 친숙한 LCK 한글 팀명(한화생명, 농심 레드포스, 한진 브리온, 키움 DRX 등)으로 어댑팅 단계에서 자동 번역하여 레이아웃 가독성을 극대화했습니다.
+- 복잡하고 중첩된 PandaScore의 API 응답 데이터 타입을 기존 UI 규격에 맞게 1:1로 가공해주는 전용 어댑터(`lib/utils/adapter.ts`)를 설계했습니다.
 
 ---
 
@@ -90,18 +94,19 @@ lol-league/
 
 ## 🛠️ Technology Stack (기술 스택)
 
-* **Framework**: Next.js 15.2.7 (App Router)
-* **Library**: React 19.2.4
-* **Language**: TypeScript 5
-* **Styling**: Tailwind CSS 4.0
-* **API Source**: PandaScore LoL REST API (LCK Series ID: 10419)
-* **Deployment**: Vercel
+- **Framework**: Next.js 15.2.7 (App Router)
+- **Library**: React 19.2.4
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4.0
+- **API Source**: PandaScore LoL REST API (LCK Series ID: 10419)
+- **Deployment**: Vercel
 
 ---
 
 ## 🚀 Getting Started (시작하기)
 
 ### 1. 환경 변수 설정
+
 프로젝트 루트 디렉토리에 `.env.local` 파일을 생성하고 아래와 같이 PandaScore API 토큰을 설정합니다.
 
 ```env
@@ -110,6 +115,7 @@ PANDASCORE_API_TOKEN=your_pandascore_token_here
 ```
 
 ### 2. 패키지 설치
+
 의존성 패키지를 설치합니다.
 
 ```bash
@@ -117,13 +123,14 @@ npm install
 ```
 
 ### 3. 로컬 개발 서버 실행
+
 로컬 개발 서버를 기동합니다.
 
 ```bash
 npm run dev
 ```
 
-브라우저에서 `http://localhost:3000`에 접속하여 결과를 확인합니다. 
+브라우저에서 `http://localhost:3000`에 접속하여 결과를 확인합니다.
 주소창에 `?month=6` 혹은 `?league=LCK` 등을 붙여서 접속했을 때, 해당 필터가 초기 적용된 상태에서 스무스 스크롤이 지정 위치로 동작하는지 확인 가능합니다.
 
 ---
@@ -131,24 +138,30 @@ npm run dev
 ## 💡 Code Highlights (핵심 코드 설명)
 
 ### 1. 5분 단위의 서버 사이드 메모리 캐싱
+
 Next.js 15+의 `use cache`와 `cacheLife`를 통해, Rate Limit 제약이 타이트한 무료 API 요금제 환경에서도 안전하게 구동되도록 설계되었습니다.
+
 ```typescript
 // lib/actions/match.ts
 export const getMatches = async (): Promise<Match[]> => {
   "use cache";
   cacheLife({
-    stale: 300,  // 5분 동안 최신 데이터로 보장
+    stale: 300, // 5분 동안 최신 데이터로 보장
     expire: 600, // 최대 10분 후 무조건 재생성
   });
 
-  const res = await fetch(`https://api.pandascore.co/lol/matches?filter[serie_id]=10419&token=${token}...`);
+  const res = await fetch(
+    `https://api.pandascore.co/lol/matches?filter[serie_id]=10419&token=${token}...`,
+  );
   const rawMatches = await res.json();
   return rawMatches.map(adaptPandaScoreMatch);
 };
 ```
 
 ### 2. pushState를 통한 URL 비동기식 브라우저 동기화
+
 사용자가 탭을 바꿀 때, 서버로 RSC 패킷을 재요청하는 Next.js `<Link>` 방식을 쓰지 않고 상태 변경과 동시에 주소창만 부드럽게 동기화합니다.
+
 ```typescript
 // components/match/MatchDashboard.tsx
 const syncUrlParams = (month: number, league: string) => {
@@ -163,7 +176,9 @@ const syncUrlParams = (month: number, league: string) => {
 ```
 
 ### 3. easeOutCubic 커스텀 스무스 스크롤
+
 브라우저 기본 `scrollIntoView`가 동반하는 스크롤 정지 및 떨림 현상을 해소하고 부드러운 감속 가속(Easing) 효과를 지원합니다.
+
 ```typescript
 // lib/utils/scroll.ts
 const easeOutCubic = (t: number): number => 1 - (1 - t) ** 3;

@@ -38,7 +38,8 @@ export default function Error({ error, reset }: ErrorProps) {
           데이터를 불러오지 못했습니다
         </h2>
         <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
-          경기 정보를 불러오는 과정에서 오류가 발생했습니다. 네트워크 연결 상태를 확인하고 아래 버튼을 눌러 다시 시도해 주세요.
+          경기 정보를 불러오는 과정에서 오류가 발생했습니다. 네트워크 연결 상태를 확인하고 아래
+          버튼을 눌러 다시 시도해 주세요.
         </p>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
