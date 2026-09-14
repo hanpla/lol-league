@@ -1,18 +1,15 @@
+import { getCurrentKstMonth } from "@/lib/utils/date";
+
 interface MonthTabsProps {
   selectedMonth: number;
-  selectedLeague: string;
   onMonthSelect: (month: number) => void;
   activeMonths: number[];
 }
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-export default function MonthTabs({
-  selectedMonth,
-  onMonthSelect,
-  activeMonths,
-}: MonthTabsProps) {
-  const currentMonth = new Date().getMonth() + 1;
+export default function MonthTabs({ selectedMonth, onMonthSelect, activeMonths }: MonthTabsProps) {
+  const currentMonth = getCurrentKstMonth();
 
   return (
     <section className="mb-6">

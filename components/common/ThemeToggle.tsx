@@ -8,7 +8,7 @@ import MoonIcon from "@/components/common/icons/MoonIcon";
 const emptySubscribe = () => () => {};
 
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
   const isMounted = useSyncExternalStore(
     emptySubscribe,
@@ -22,7 +22,7 @@ export default function ThemeToggle() {
     );
   }
 
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
 
   return (
     <button

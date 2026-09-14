@@ -26,7 +26,6 @@ export default function MatchDashboard({ allMatches }: MatchDashboardProps) {
       {/* Month Navigation Tabs Component */}
       <MonthTabs
         selectedMonth={selectedMonth}
-        selectedLeague={selectedLeague}
         onMonthSelect={handleMonthSelect}
         activeMonths={activeMonths}
       />
