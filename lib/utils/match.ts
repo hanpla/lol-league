@@ -1,5 +1,13 @@
 import { Match } from "@/types/match";
-import { getCurrentKstMonth, formatMatchDate } from "./date";
+import { getCurrentKstMonth, formatMatchDate, getKstMonthFromDate } from "./date";
+
+/**
+ * 특정 Date 객체의 KST(UTC+9) 기준 자정(00:00:00 UTC) 타임스탬프를 계산합니다.
+ */
+const getKstDayTimestamp = (date: Date): number => {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  return Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate());
+};
 
 /**
  * 1. 쿼리 스트링 파라미터를 읽어 선택된 월과 리그 코드를 파싱합니다.
@@ -16,7 +24,7 @@ export const parseMatchSearchParams = (
 
 /**
  * 2. 전체 경기 목록을 바탕으로 기본으로 표시할 월을 계산합니다.
- * - 오늘(00:00:00) 이후 예정된 경기 중 가장 가까운 다음 경기의 월을 반환합니다.
+ * - 오늘(KST 기준 00:00:00) 이후 예정된 경기 중 가장 가까운 다음 경기의 월을 반환합니다.
  * - 앞으로의 미래 경기가 없다면 가장 최근(마지막) 경기 그룹의 월을 반환합니다.
  * - 경기 데이터가 전혀 없다면 KST 기준 현재 월을 반환합니다.
  */
@@ -29,31 +37,22 @@ export const getDefaultMatchMonth = (
     return fallbackMonth;
   }
 
-  const today = new Date(
-    referenceDate.getFullYear(),
-    referenceDate.getMonth(),
-    referenceDate.getDate(),
-  ).getTime();
+  const today = getKstDayTimestamp(referenceDate);
 
   // 오늘 이후(오늘 포함) 가장 가까운 다음 경기 탐색
   const upcomingMatch = matches.find((match) => {
-    const matchDate = new Date(match.scheduled_at);
-    const matchDay = new Date(
-      matchDate.getFullYear(),
-      matchDate.getMonth(),
-      matchDate.getDate(),
-    ).getTime();
+    const matchDay = getKstDayTimestamp(new Date(match.scheduled_at));
     return matchDay >= today;
   });
 
   if (upcomingMatch) {
-    return new Date(upcomingMatch.scheduled_at).getMonth() + 1;
+    return getKstMonthFromDate(upcomingMatch.scheduled_at);
   }
 
   // 미래 경기가 없다면 가장 마지막(최신) 과거 경기의 월 반환
   const lastMatch = matches[matches.length - 1];
   if (lastMatch) {
-    return new Date(lastMatch.scheduled_at).getMonth() + 1;
+    return getKstMonthFromDate(lastMatch.scheduled_at);
   }
 
   return fallbackMonth;
@@ -68,8 +67,7 @@ export const filterMatches = (
   selectedLeague: string,
 ): Match[] => {
   return matches.filter((match) => {
-    // Extract month directly from ISO string (e.g. "2026-04-01..." -> month index 5 to 7 is "04")
-    const matchesMonth = parseInt(match.scheduled_at.slice(5, 7), 10) === selectedMonth;
+    const matchesMonth = getKstMonthFromDate(match.scheduled_at) === selectedMonth;
     const matchesLeague = selectedLeague === "all" || match.league?.code === selectedLeague;
     return matchesMonth && matchesLeague;
   });
@@ -79,7 +77,7 @@ export const filterMatches = (
  * 4. 전체 매치 목록에서 경기가 있는 월 목록을 중복 없이 추출합니다.
  */
 export const extractActiveMonths = (matches: Match[]): number[] => {
-  const months = matches.map((match) => parseInt(match.scheduled_at.slice(5, 7), 10));
+  const months = matches.map((match) => getKstMonthFromDate(match.scheduled_at));
   return Array.from(new Set(months)).sort((a, b) => a - b);
 };
 
@@ -114,32 +112,18 @@ export const findTargetMatchGroupIndex = (
 ): number => {
   if (groupedMatches.length === 0) return -1;
 
-  const today = new Date(
-    referenceDate.getFullYear(),
-    referenceDate.getMonth(),
-    referenceDate.getDate(),
-  ).getTime();
+  const today = getKstDayTimestamp(referenceDate);
 
   // 1. 오늘 당일 경기 그룹 찾기
   const todayIndex = groupedMatches.findIndex((group) => {
-    const matchDate = new Date(group.matchesOnDate[0].scheduled_at);
-    const matchDay = new Date(
-      matchDate.getFullYear(),
-      matchDate.getMonth(),
-      matchDate.getDate(),
-    ).getTime();
+    const matchDay = getKstDayTimestamp(new Date(group.matchesOnDate[0].scheduled_at));
     return matchDay === today;
   });
   if (todayIndex !== -1) return todayIndex;
 
   // 2. 오늘 이후(미래)로 예정된 가장 가까운 다음 경기 그룹 찾기
   const nextUpcomingIndex = groupedMatches.findIndex((group) => {
-    const matchDate = new Date(group.matchesOnDate[0].scheduled_at);
-    const matchDay = new Date(
-      matchDate.getFullYear(),
-      matchDate.getMonth(),
-      matchDate.getDate(),
-    ).getTime();
+    const matchDay = getKstDayTimestamp(new Date(group.matchesOnDate[0].scheduled_at));
     return matchDay > today;
   });
   if (nextUpcomingIndex !== -1) return nextUpcomingIndex;
