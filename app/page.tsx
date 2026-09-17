@@ -2,6 +2,8 @@ import { getMatches } from "@/lib/actions/match";
 import Header from "@/components/common/Header";
 import MatchDashboard from "@/components/match/MatchDashboard";
 import MatchDashboardSkeleton from "@/components/match/MatchDashboardSkeleton";
+import JsonLd from "@/components/common/JsonLd";
+import SeoContentSection from "@/components/match/SeoContentSection";
 import { Suspense } from "react";
 
 // Server Component wrapper that fetches all matches from the API
@@ -9,7 +11,12 @@ async function MatchDashboardContainer() {
   // Fetch matches from the server (5 minutes cached via "use cache")
   const allMatches = await getMatches();
 
-  return <MatchDashboard allMatches={allMatches} />;
+  return (
+    <>
+      <JsonLd matches={allMatches} />
+      <MatchDashboard allMatches={allMatches} />
+    </>
+  );
 }
 
 export default async function Home() {
@@ -23,6 +30,9 @@ export default async function Home() {
         <Suspense fallback={<MatchDashboardSkeleton />}>
           <MatchDashboardContainer />
         </Suspense>
+
+        {/* Semantic SEO & FAQ Guide Section for crawlers & users */}
+        <SeoContentSection />
       </div>
     </main>
   );
