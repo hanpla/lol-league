@@ -12,7 +12,7 @@ export default function MonthTabs({ selectedMonth, onMonthSelect, activeMonths }
   const currentMonth = getCurrentKstMonth();
 
   return (
-    <section className="mb-6">
+    <section aria-label="월별 경기 일정 선택" className="mb-6">
       <div className="flex flex-wrap justify-center gap-1 rounded-xl border border-neutral-200 bg-neutral-200/30 p-1.5 transition-colors duration-300 sm:grid sm:grid-cols-6 md:grid-cols-12 dark:border-neutral-800 dark:bg-neutral-900/40">
         {MONTHS.map((m) => {
           const isActive = m <= currentMonth || activeMonths.includes(m);

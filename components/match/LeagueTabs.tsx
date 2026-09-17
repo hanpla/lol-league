@@ -13,7 +13,7 @@ const LEAGUE = [
 
 export default function LeagueTabs({ selectedLeague, onLeagueSelect }: LeagueTabsProps) {
   return (
-    <section className="mb-8 flex flex-wrap justify-center gap-2">
+    <section aria-label="리그 종목 필터링" className="mb-8 flex flex-wrap justify-center gap-2">
       {LEAGUE.map((league) => {
         const isSelected = selectedLeague === league.code;
 
