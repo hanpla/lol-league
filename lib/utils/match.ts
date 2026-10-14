@@ -68,7 +68,9 @@ export const filterMatches = (
 ): Match[] => {
   return matches.filter((match) => {
     const matchesMonth = getKstMonthFromDate(match.scheduled_at) === selectedMonth;
-    const matchesLeague = selectedLeague === "all" || match.league?.code === selectedLeague;
+    const matchesLeague =
+      selectedLeague.toLowerCase() === "all" ||
+      match.league?.code?.toUpperCase() === selectedLeague.toUpperCase();
     return matchesMonth && matchesLeague;
   });
 };
