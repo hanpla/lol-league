@@ -46,3 +46,8 @@ export interface PandaScoreMatch {
   streams_list: PandaScoreStream[] | null;
   modified_at: string | null;
 }
+
+export interface PandaScorePageResult {
+  matches: PandaScoreMatch[];
+  totalPages: number;
+}
