@@ -8,7 +8,7 @@ const SkeletonPulse = ({ className }: { className?: string }) => {
 };
 
 const SKELETON_MONTHS = Array.from({ length: 12 }, (_, i) => i);
-const SKELETON_LEAGUES = [1, 2, 3];
+const SKELETON_LEAGUES = [1, 2, 3, 4, 5];
 
 export default function MatchDashboardSkeleton() {
   return (
