@@ -8,7 +8,7 @@ import "./globals.css";
 const SITE_URL = "https://lol-league.vercel.app";
 const SITE_TITLE = "LCK 일정 & 롤 대회 일정 · 경기 결과 | LOL League Hub";
 const SITE_DESCRIPTION =
-  "LCK(롤챔스), MSI, EWC 등 2026 리그 오브 레전드 주요 대회 일정과 실시간 경기 결과, 대진표, 경기 시간을 가장 빠르고 깔끔하게 확인하세요.";
+  "LCK(롤챔스), MSI, EWC, 롤드컵(월즈) 등 2026 리그 오브 레전드 주요 대회 일정과 실시간 경기 결과, 대진표, 경기 시간을 가장 빠르고 깔끔하게 확인하세요.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -29,6 +29,10 @@ export const metadata: Metadata = {
     "롤 경기 시간",
     "MSI 일정",
     "EWC 롤 일정",
+    "롤드컵 일정",
+    "롤드컵 2026",
+    "월즈 일정",
+    "Worlds 일정",
     "롤 e스포츠 일정",
     "LOL 대회 일정",
     "LOL League Hub",

@@ -39,9 +39,9 @@ export default function SeoContentSection() {
         <div className="space-y-3 text-xs leading-relaxed text-neutral-600 sm:text-sm dark:text-neutral-400">
           <p>
             <strong>LOL League Hub</strong>는 리그 오브 레전드 e스포츠 팬들을 위해{" "}
-            <strong>LCK(롤챔스)</strong>를 비롯한 <strong>MSI</strong>, <strong>EWC</strong> 등
-            국내외 주요 롤 대회의 경기 일정, 대진표, 실시간 스코어 및 경기 결과를 가장 빠르고
-            정확하게 제공합니다.
+            <strong>LCK(롤챔스)</strong>를 비롯한 <strong>MSI</strong>, <strong>EWC</strong>,{" "}
+            <strong>롤드컵(Worlds)</strong> 등 국내외 주요 롤 대회의 경기 일정, 대진표, 실시간
+            스코어 및 경기 결과를 가장 빠르고 정확하게 제공합니다.
           </p>
           <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
             <div className="rounded-xl bg-neutral-100/70 p-3.5 dark:bg-neutral-800/40">
@@ -57,7 +57,7 @@ export default function SeoContentSection() {
                 🏆 지원 대회 리그
               </h3>
               <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                LCK 정규리그 및 플레이오프, MSI, EWC 국제 대회
+                LCK 정규리그 및 플레이오프, MSI, EWC, 롤드컵(Worlds) 국제 대회
               </p>
             </div>
           </div>

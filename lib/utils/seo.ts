@@ -10,7 +10,7 @@ export const FAQ_LIST: FaqItem[] = [
   {
     question: "LCK 외에 어떤 롤 대회 일정을 확인할 수 있나요?",
     answer:
-      "LCK뿐만 아니라 전 세계 최상위 팀들이 맞붙는 MSI(Mid-Season Invitational), EWC(Esports World Cup) 등 주요 국내외 리그 오브 레전드 공식 대회의 일정을 모두 제공합니다.",
+      "LCK뿐만 아니라 전 세계 최상위 팀들이 맞붙는 MSI(Mid-Season Invitational), EWC(Esports World Cup), 롤드컵(월드 챔피언십/Worlds) 등 주요 국내외 리그 오브 레전드 공식 대회의 일정을 모두 제공합니다.",
   },
   {
     question: "롤 대회 경기 결과와 일정은 실시간으로 업데이트되나요?",
@@ -28,10 +28,10 @@ export const generateWebsiteSchema = () => ({
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "LOL League Hub",
-  alternateName: ["롤 리그 허브", "LCK 일정 Hub", "롤 대회 일정"],
+  alternateName: ["롤 리그 허브", "LCK 일정 Hub", "롤 대회 일정", "롤드컵 일정 Hub"],
   url: "https://lol-league.vercel.app",
   description:
-    "LCK(롤챔스), MSI, EWC 등 2026 리그 오브 레전드 주요 대회 일정과 실시간 경기 결과, 대진표를 한눈에 확인하세요.",
+    "LCK(롤챔스), MSI, EWC, 롤드컵(월즈) 등 2026 리그 오브 레전드 주요 대회 일정과 실시간 경기 결과, 대진표를 한눈에 확인하세요.",
   inLanguage: "ko-KR",
 });
 
