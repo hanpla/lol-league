@@ -10,6 +10,8 @@ import {
 import { getCurrentKstMonth } from "@/lib/utils/date";
 import { getMatches } from "@/lib/actions/match";
 
+const LIVE_POLL_INTERVAL_MS = 30_000;
+
 export const useMatchDashboardState = (allMatches: Match[]) => {
   const searchParams = useSearchParams();
 
@@ -32,10 +34,8 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
   const [selectedLeague, setSelectedLeague] = useState<string>(initLeague);
   const [matches, setMatches] = useState<Match[]>(allMatches);
 
-  // 초기 SSR 데이터가 비어있을 경우에만 클라이언트 비동기 페칭 수행 (불필요한 중복 호출 방지)
+  // 1. 최초 마운트 시 SWR(Stale-While-Revalidate) 전략으로 백그라운드에서 최신 데이터를 호출하여 화면 최신화
   useEffect(() => {
-    if (allMatches.length > 0) return;
-
     let isMounted = true;
 
     const fetchFreshMatches = async () => {
@@ -43,7 +43,8 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
         const freshMatches = await getMatches();
         if (isMounted && freshMatches && freshMatches.length > 0) {
           setMatches(freshMatches);
-          if (!initialMonthParam) {
+          // 만약 초기 SSR 데이터가 비어있었고 URL 파라미터가 없었다면 실시간 데이터 기준으로 기본 월 갱신
+          if (!initialMonthParam && allMatches.length === 0) {
             const freshDefaultMonth = getDefaultMatchMonth(freshMatches, kstMonth);
             setSelectedMonth(freshDefaultMonth);
           }
@@ -59,6 +60,54 @@ export const useMatchDashboardState = (allMatches: Match[]) => {
       isMounted = false;
     };
   }, [allMatches.length, initialMonthParam, kstMonth]);
+
+  // 진행 중인 라이브 경기 존재 여부 감지
+  const hasLiveMatch = useMemo(() => matches.some((match) => match.status === "live"), [matches]);
+
+  // 2. 현재 진행 중인(live) 경기가 있을 경우 30초 간격으로 백그라운드 폴링 수행
+  useEffect(() => {
+    if (!hasLiveMatch) return;
+
+    let isMounted = true;
+    let isFetching = false;
+
+    const pollLiveMatches = async () => {
+      // 브라우저 탭이 백그라운드(비활성) 상태일 때는 불필요한 네트워크 호출 방지
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+        return;
+      }
+      if (isFetching) return;
+      isFetching = true;
+
+      try {
+        const freshMatches = await getMatches();
+        if (isMounted && freshMatches && freshMatches.length > 0) {
+          setMatches(freshMatches);
+        }
+      } catch (error) {
+        console.error("라이브 경기 정보 폴링 실패:", error);
+      } finally {
+        isFetching = false;
+      }
+    };
+
+    const intervalId = setInterval(pollLiveMatches, LIVE_POLL_INTERVAL_MS);
+
+    // 사용자가 다른 탭에서 다시 이 화면으로 돌아왔을 때 즉시 최신 정보 동기화
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        pollLiveMatches();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [hasLiveMatch]);
 
   // 브라우저 뒤로가기/앞으로가기(popstate) 이벤트 감지하여 React 상태 동기화
   useEffect(() => {
