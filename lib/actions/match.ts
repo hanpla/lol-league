@@ -74,14 +74,10 @@ const fetchFirstPage = async (
 
 /**
  * LCK 2026, MSI 2026, EWC 2026 및 Worlds 2026(롤드컵) 대회 일정을 PandaScore API에서 직접 조회합니다.
- * Next.js의 use cache와 cacheLife를 활용하여 5분 캐시를 적용합니다.
+ * 진행 중인 라이브 경기가 있을 경우 30초~1분 단기 캐시, 그 외에는 5분 캐시를 적용합니다.
  */
 export const getMatches = async (): Promise<Match[]> => {
   "use cache";
-  cacheLife({
-    stale: 300, // 5분
-    expire: 600, // 최대 10분
-  });
 
   const token = process.env.PANDASCORE_API_TOKEN;
   if (!token) {
@@ -109,7 +105,24 @@ export const getMatches = async (): Promise<Match[]> => {
     const rawMatches = [...page1Matches, ...remainingMatches];
 
     // PandaScore API 원본 데이터를 기존 UI 타입으로 어댑팅
-    return rawMatches.map(adaptPandaScoreMatch);
+    const adaptedMatches = rawMatches.map(adaptPandaScoreMatch);
+
+    // 진행 중인 라이브 경기가 있을 경우 캐시 수명을 단축하여 실시간 스코어 갱신 반영 보장
+    const hasLiveMatch = adaptedMatches.some((m) => m.status === "live");
+    if (hasLiveMatch) {
+      cacheLife({
+        stale: 30, // 30초
+        revalidate: 60, // 60초
+        expire: 300, // 5분
+      });
+    } else {
+      cacheLife({
+        stale: 300, // 5분
+        expire: 600, // 최대 10분
+      });
+    }
+
+    return adaptedMatches;
   } catch (error) {
     console.error("❌ getMatches fetch 중 예외 발생:", error);
     return [];
